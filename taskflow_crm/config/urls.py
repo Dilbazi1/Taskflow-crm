@@ -15,8 +15,36 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path,include
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from users.api.serializers import MyTokenSerializer
+
+class MyTokenView(TokenObtainPairView):
+    serializer_class = MyTokenSerializer
+
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="TaskFlow API",
+        default_version='v1',
+        description="CRM + Chat API",
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    path('admin/', admin.site.urls),
+
+    path('api/token/', MyTokenView.as_view()),
+    path('api/token/refresh/', TokenRefreshView.as_view()),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0)),
+    path('api/', include('tasks.api.urls')),
+
 ]

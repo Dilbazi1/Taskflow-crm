@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     "users",
     "clients",
     "tasks",
-    "chats"
+    "chats",
+    "drf_yasg",
 ]
 
 MIDDLEWARE = [
@@ -70,7 +71,11 @@ TEMPLATES = [
         },
     },
 ]
-
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
 WSGI_APPLICATION = "config.wsgi.application"
 
 
@@ -83,7 +88,16 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,  # ❌ убирает Django login
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
